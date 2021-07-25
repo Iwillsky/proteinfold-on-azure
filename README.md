@@ -1,7 +1,8 @@
 # proteinfold-on-azure
 
-# RoseTTAFold on Azure (Single VM)
-Prerequisite
+## RoseTTAFold on Azure (Single VM)
+### Prerequisite
+
 	· Read and know the license requirements of RoseTTAFold and its weight data.
 	· Apply for PyRoseTTA License and download download installation package file(suggest Python3.7 Linux version). 
 	· Have or register a new Azure cloud account.
@@ -9,16 +10,24 @@ Prerequisite
 	· 选定Select the working Azure region (suggest US West 2 region). Create Resource Group and Create a Vnet.
 	· Submit NCas_T4_v3 Quota increate requestof Azure T4 GPU Series VM. If need more performance, request the V100 series NCs_v3 quota instead.
 	· This hands-on will charge cost. Here is a reference if use T4 VM in US West 2 region: less than $50 estimated 1 day accomplishment. Detailed pricing is here. 
-Let's move on after above prerequisites confirmed.
+	Let's move on after above prerequisites confirmed.
  
-Start VM
+### Start VM
 In Azure console,  enter the VM creating page by Home->Create Resource->Virtual Machine. Set the basic configuration as below screenshot shows. Set VM size as NC16as_T4_v3 and image as CentOS-based HPC 7.9 Gen2 with GPU driver, CUDA and HPC tools pre-installed. Set SSH Key as created before.
+
+![image](https://github.com/Iwillsky/proteinfold-on-azure/blob/main/images/configvm.jpg)
 
 Click Next:Disks. Config a new data disk by click 'Create and attach a new disk'. Suggest at least 4096GB with consideration of training dataset amount. Click 'Review+Create' to check and then Create VM.
 
+![image](https://github.com/Iwillsky/proteinfold-on-azure/blob/main/images/configdatadisk.jpg)
+
 We need one more step to enlarge the system disk size. Stop VM first with click option of reserve VM's public IP address. After status is as stopped, click VM Disk menu -> click system disk link -> 'Size+performance' to set the system disk size as 512G and performance tier P20 or higher as below shows. Wait till upper right pop-up info shows update accomplished then go back to Start the VM. VM status will change to Running several minutes later.
 
+![image](https://github.com/Iwillsky/proteinfold-on-azure/blob/main/images/configosdisk.jpg)
+
 SSH login to VM server and execute the next commands to mount data disk to VM. 
+
+```
 sudo parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%
 sudo mkfs.xfs /dev/sdc1
 sudo partprobe /dev/sdc1
@@ -30,14 +39,15 @@ cat <<EOF | sudo tee -a /etc/fstab
 UUID=$uuidstr /data xfs defaults, nofail 1 2
 EOF
 lsblk -o NAME,HCTL,SIZE,MOUNTPOINT | grep -i "sd"
+```
 
-RoseTTAFold installation & Data preparation 
+### RoseTTAFold installation & Data preparation 
 Keep in SSH console and execute below commands to install the RoseTTAFold application, which include these steps:
 	· Install Anaconda3. In process set the destination directory as /opt/anaconda3 and select yes when ask whether to init conda.
 	· Download RoseTTAFold Github repo.
 	· Config two conda environments.
 	· Install the PyRosetta4 component in folding conda environment.
-	 
+```	 
 ## Install anaconda 
 sudo yum install -y libXcomposite libXcursor libXi libXtst libXrandr alsa-lib mesa-libEGL libXdamage mesa-libGL libXScrnSaver
 wget https://repo.anaconda.com/archive/Anaconda3-2021.05-Linux-x86_64.sh
@@ -67,9 +77,11 @@ python setup.py install
 python     #To verify the pyrosetta lib in python commandline
 #then input two commands:     import pyrosetta;    pyrosetta.init()
 conda deactivate
+```
 
-During above step, enter Python command to check the status of PyRosetta4 after setup.py install action. Execute the command of import and the init() to check as without any compilation errors. This point is very important to confirm before goto the next.
+During above steps, enter Python command to check the status of PyRosetta4 after setup.py install action. Execute the command of import and the init() to check as without any compilation errors. This point is very important to confirm before goto the next.
 
+```
 (folding) [azureuser@vmt4rosettarun RoseTTAFold]$ python
 Python 3.7.10 (default, Jun  4 2021, 14:48:32) 
 [GCC 7.5.0] :: Anaconda, Inc. on linux
@@ -85,9 +97,11 @@ basic.random.init_random_generator: 'RNG device' seed mode, using '/dev/urandom'
 basic.random.init_random_generator: RandomGenerator:init: Normal mode, seed=-2055557650 RG_type=mt19937
 >>> 
 Press Ctrl+D and execute 'conda deactivate' to go back to VM shell.
+```
 
 Next is to prepare the datasets including weights and reference protein pdb database. We duplicate these data in Azure Blob storage to fasten the download speed due to theire large data amount. Unzip operation will cost some time in hours. Suggest to unzip in multiple SSH windows with no interruption to assure the data integerity. Check the data size through 'du -sh <dirname>' command as bfd 1.8TB/pdb100 667GB/UniRef30 181GB.
 
+```
 cd /data/RoseTTAFold/
 ## wget https://files.ipd.uw.edu/pub/RoseTTAFold/weights.tar.gz
 wget https://proteinfoldonazure.blob.core.windows.net/data/weights.tar.gz
@@ -109,13 +123,16 @@ tar -zxvf bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt.tar.gz -C ./b
 ## wget https://files.ipd.uw.edu/pub/RoseTTAFold/pdb100_2021Mar03.tar.gz
 wget https://proteinfoldonazure.blob.core.windows.net/data/pdb100_2021Mar03.tar.gz
 tar -zxvf pdb100_2021Mar03.tar.gz
- 
-Running sample 
+```
+	
+### Running sample 
 Then we can run the RoseTTAFold: (Do not lose the second param of '.' )
+```
 cd example
 ../run_pyrosetta_ver.sh input.fa .
-
-First running will execute the generation of MSA params and execute Hhsearch, which will cost some time est. at 90+ mins. Successful running prompts like below and will output 5 preferred protein pdb results at path of example/model/ which named as model_x.pdb. AI training logging info can be found at ./log/folding.stdout. 
+```
+First running will execute the generation of MSA params and execute Hhsearch, which will cost some time est. at ~30 mins. Successful running prompts like below and will output 5 preferred protein pdb results at path of example/model/ which named as model_x.pdb. AI training logging info can be found at ./log/folding.stdout. 
+```
 [azureuser@vmt4rosettarun example]$ ../run_pyrosetta_ver.sh input.fa .
 Running HHblits
 Running PSIPRED
@@ -126,13 +143,22 @@ Running DeepAccNet-msa
 Picking final models
 Final models saved in: ./model
 Done 
-
+```
+	
 And you can also try a end-to-end prediction by executing below commands, which will be done within 10 mins. At example/ path, it will output t000_.e2e.pdb result.
+
+```	
 mv t000_.3track.npz t000_.3track.npz.origin
 ../run_e2e_ver.sh input.fa .
+```
 
 GPU utilization reached near 100% in prediction steps as below screenshot shows. If want to use more CPU and memory in execution, modify the 18th line of run_pyrosetta_ver.sh and run_e2e_ver.sh with more CPU number and memory size for full utilization of infrastructure resource.
 
+![image](https://github.com/Iwillsky/proteinfold-on-azure/blob/main/images/gpu-util.jpg)
+	
 Below is the image of two pdb protein structure of pyrosetta and end2end results in PyMOL tools UI. What to do in the next is to change the input fa file as yours or to write your own script according these two demos.
 
 ![image](https://github.com/Iwillsky/proteinfold-on-azure/blob/main/images/pdb_result.jpg)
+
+### Tear down
+If will not keep this enviroment, delete the resource group to tear down all the related resource directly.
