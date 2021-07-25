@@ -7,7 +7,7 @@
 	· Apply for PyRoseTTA License and download download installation package file(suggest Python3.7 Linux version). 
 	· Have or register a new Azure cloud account.
 	· Create SSH Key and save the pem file.
-	· 选定Select the working Azure region (suggest US West 2 region). Create Resource Group and Create a Vnet.
+	· Select the working Azure region (suggest US West 2 region). Create Resource Group and Create a Vnet.
 	· Submit NCas_T4_v3 Quota increate requestof Azure T4 GPU Series VM. If need more performance, request the V100 series NCs_v3 quota instead.
 	· This hands-on will charge cost. Here is a reference if use T4 VM in US West 2 region: less than $50 estimated 1 day accomplishment. Detailed pricing is here. 
 	Let's move on after above prerequisites confirmed.
