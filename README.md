@@ -1,16 +1,16 @@
 # proteinfold-on-azure
 
 ## RoseTTAFold on Azure (Single VM)
-### Prerequisite
+### Prerequisites
 
-	· Read and know the license requirements of [RoseTTAFold](https://github.com/RosettaCommons/RoseTTAFold/blob/main/LICENSE) and its [weight data](https://files.ipd.uw.edu/pub/RoseTTAFold/Rosetta-DL_LICENSE.txt).
-	· Apply for [PyRosetta License](https://els2.comotion.uw.edu/product/pyrosetta) and [download](http://www.pyrosetta.org/downloads) installation package file (suggest Python3.7 Linux version). 
-	· Have or [register a new Azure cloud account](https://www.microsoft.com/china/azure/index.html).
-	· Create [SSH Key](https://docs.microsoft.com/en-us/azure/virtual-machines/ssh-keys-portal) and save the pem file.
-	· Select the working Azure region (suggest US West 2 region). [Create Resource Group](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal#:~:text=1%20Sign%20in%20to%20the%20Azure%20portal.%202,newly%20created%20resource%20group%20to%20open%20it.%20) and [Create a Vnet](https://docs.microsoft.com/en-us/azure/virtual-network/quick-create-portal).
-	· Submit NCas_T4_v3 [quota increate request](https://docs.microsoft.com/en-us/azure/azure-portal/supportability/per-vm-quota-requests) of Azure T4 GPU Series VM. If need more performance, request the V100 series NCs_v3 quota instead.
-	· This hands-on will charge cost. Here is a reference if use T4 VM in US West 2 region: less than $50 estimated 1 day accomplishment. Detailed pricing is [here](https://azure.microsoft.com/en-us/pricing/calculator/?service=virtual-machines). 
-	Let's move on after above prerequisites confirmed.
+· Read and know the license requirements of [RoseTTAFold](https://github.com/RosettaCommons/RoseTTAFold/blob/main/LICENSE) and its [weight data](https://files.ipd.uw.edu/pub/RoseTTAFold/Rosetta-DL_LICENSE.txt).  
+· Apply for [PyRosetta License](https://els2.comotion.uw.edu/product/pyrosetta) and [download](http://www.pyrosetta.org/downloads) installation package file (suggest Python3.7 Linux version).   
+· Have or [register a new Azure cloud account](https://www.microsoft.com/china/azure/index.html).  
+· Create [SSH Key](https://docs.microsoft.com/en-us/azure/virtual-machines/ssh-keys-portal) and save the pem file.  
+· Select the working Azure region (suggest US West 2 region). [Create Resource Group](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal#:~:text=1%20Sign%20in%20to%20the%20Azure%20portal.%202,newly%20created%20resource%20group%20to%20open%20it.%20) and [Create a Vnet](https://docs.microsoft.com/en-us/azure/virtual-network/quick-create-portal).  
+· Submit NCas_T4_v3 [quota increate request](https://docs.microsoft.com/en-us/azure/azure-portal/supportability/per-vm-quota-requests) of Azure T4 GPU Series VM. If need more performance, request the V100 series NCs_v3 quota instead.  
+· This hands-on will charge cost. Here is a reference if use T4 VM in US West 2 region: less than $50 estimated 1 day accomplishment. Detailed pricing is [here](https://azure.microsoft.com/en-us/pricing/calculator/?service=virtual-machines).   
+Let's move on after above prerequisites confirmed.
  
 ### Start VM
 In Azure console,  enter the VM creating page by Home->Create Resource->Virtual Machine. Set the basic configuration as below screenshot shows. Set VM size as NC16as_T4_v3 and image as CentOS-based HPC 7.9 Gen2 with GPU driver, CUDA and HPC tools pre-installed. Set SSH Key as created before.
@@ -43,10 +43,10 @@ lsblk -o NAME,HCTL,SIZE,MOUNTPOINT | grep -i "sd"
 
 ### RoseTTAFold installation & Data preparation 
 Keep in SSH console and execute below commands to install the RoseTTAFold application, which include these steps:
-	· Install Anaconda3. In process set the destination directory as /opt/anaconda3 and select yes when ask whether to init conda.
-	· Download RoseTTAFold Github repo.
-	· Config two conda environments.
-	· Install the PyRosetta4 component in folding conda environment.
+· Install Anaconda3. In process set the destination directory as /opt/anaconda3 and select yes when ask whether to init conda.  
+· Download RoseTTAFold Github repo.  
+· Config two conda environments.  
+· Install the PyRosetta4 component in folding conda environment.  
 ```	 
 ## Install anaconda 
 sudo yum install -y libXcomposite libXcursor libXi libXtst libXrandr alsa-lib mesa-libEGL libXdamage mesa-libGL libXScrnSaver
