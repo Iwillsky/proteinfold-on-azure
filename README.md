@@ -42,7 +42,7 @@ lsblk -o NAME,HCTL,SIZE,MOUNTPOINT | grep -i "sd"
 ```
 
 ### RoseTTAFold installation & Data preparation 
-Keep in SSH console and execute below commands to install the RoseTTAFold application, which include these steps:
+Keep in SSH console and execute below commands to install the RoseTTAFold application, which include these steps:  
 · Install Anaconda3. In process set the destination directory as /opt/anaconda3 and select yes when ask whether to init conda.  
 · Download RoseTTAFold Github repo.  
 · Config two conda environments.  
@@ -76,7 +76,8 @@ cd PyRosetta4.Release.python37.linux.release-289/setup
 python setup.py install
 python     #To verify the pyrosetta lib in python commandline
 #then input two commands:     import pyrosetta;    pyrosetta.init()
-conda deactivate
+conda deactivate    #back to conda base
+conda deactivate    #back to VM shell
 ```
 
 During above steps, enter Python command to check the status of PyRosetta4 after setup.py install action. Execute the command of import and the init() to check as without any compilation errors. This point is very important to confirm before goto the next.

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-### Boot VM with data disk at least 4TB; stop VM; Set sys disk as 500G; start VM; SSH
+### Boot VM with data disk at least 4TB; stop VM; Set sys disk as 500G; start VM; SSH login.
 
 ## mount data disk
 sudo parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%
@@ -43,9 +43,10 @@ cd PyRosetta4.Release.python37.linux.release-289/setup
 python setup.py install
 #verify the pyrosetta lib
 python   
-#then input two lines: import pyrosetta;   pyrosetta.init()
+#then input two lines: <<<import pyrosetta;   <<<pyrosetta.init()
 #Ctrl-D to go back
-conda deactivate
+conda deactivate    #back to conda base
+conda deactivate    #back to VM shell
 
 cd /data/RoseTTAFold/
 ## wget https://files.ipd.uw.edu/pub/RoseTTAFold/weights.tar.gz
