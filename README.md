@@ -3,7 +3,7 @@
 ## RoseTTAFold on Azure (Single VM)
 ### Prerequisite
 
-	· Read and know the license requirements of RoseTTAFold and its weight data.
+	· Read and know the license requirements of ![RoseTTAFold](https://github.com/RosettaCommons/RoseTTAFold/blob/main/LICENSE) and its ![weight data](https://files.ipd.uw.edu/pub/RoseTTAFold/Rosetta-DL_LICENSE.txt).
 	· Apply for PyRoseTTA License and download download installation package file(suggest Python3.7 Linux version). 
 	· Have or register a new Azure cloud account.
 	· Create SSH Key and save the pem file.
