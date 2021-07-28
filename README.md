@@ -33,7 +33,7 @@ sudo mkfs.xfs /dev/sdc1
 sudo partprobe /dev/sdc1
 sudo mkdir /data
 sudo mount /dev/sdc1 /data
-sudo chmod 777 /data
+sudo chown azureuser:azureuser /data/
 uuidstr=$(blkid | grep /dev/sdc1 | awk -F " " '{print $2}' | awk -F= '{print $2}' | sed 's/"//g')
 cat <<EOF | sudo tee -a /etc/fstab
 UUID=$uuidstr /data xfs defaults, nofail 1 2
