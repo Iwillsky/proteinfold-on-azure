@@ -1,6 +1,6 @@
 #!/bin/bash
 
-### Boot VM with data disk at least 4TB; stop VM; Set sys disk as 500G; start VM; SSH login.
+### Boot VM with data disk at least 4TB; stop VM; Set OS disk as 64G; start VM; SSH login.
 
 ## mount data disk
 sudo parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%
@@ -8,7 +8,7 @@ sudo mkfs.xfs /dev/sdc1
 sudo partprobe /dev/sdc1
 sudo mkdir /data
 sudo mount /dev/sdc1 /data
-sudo chmod 777 /data/
+sudo chown azureuser:azureuser /data/
 uuidstr=$(blkid | grep /dev/sdc1 | awk -F " " '{print $2}' | awk -F= '{print $2}' | sed 's/"//g')
 cat <<EOF | sudo tee -a /etc/fstab
 UUID=$uuidstr /data xfs defaults, nofail 1 2
@@ -16,7 +16,6 @@ EOF
 lsblk -o NAME,HCTL,SIZE,MOUNTPOINT | grep -i "sd"
 
 ## install anaconda 
-sudo yum install -y libXcomposite libXcursor libXi libXtst libXrandr alsa-lib mesa-libEGL libXdamage mesa-libGL libXScrnSaver
 wget https://repo.anaconda.com/archive/Anaconda3-2021.05-Linux-x86_64.sh
 chmod +x Anaconda3-2021.05-Linux-x86_64.sh
 sudo bash ./Anaconda3-2021.05-Linux-x86_64.sh
